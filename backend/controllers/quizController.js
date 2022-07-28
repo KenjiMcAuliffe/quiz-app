@@ -43,15 +43,14 @@ const updateQuiz = asyncHandler(async (req, res) => {
         throw new Error("A quiz matching that ID was not found")
     }
 
-    //Check if user exists matching the id in the header JWT token.
-    const user = await User.findById(req.user.id)
-    if(!user) {
+    //Check if user exists in request (assigned in authMiddleware)
+    if(!req.user) {
         res.status(401)
         throw new Error("A user matching the id of the JWT token was not found.");
     }
 
     //Check that logged in user matches the quiz's user.
-    if(quiz.user.toString() !== user.id) {
+    if(quiz.user.toString() !== req.user.id) {
         res.status(401)
         throw new Error("Logged in user is not the creator of quiz.")
     }
@@ -71,15 +70,14 @@ const deleteQuiz = asyncHandler(async (req, res) => {
         throw new Error("A quiz matching that ID was not found")
     }
 
-    //Check if user exists matching the id in the header JWT token.
-    const user = await User.findById(req.user.id)
-    if(!user) {
+    //Check if user exists in request (assigned in authMiddleware)
+    if(!req.user) {
         res.status(401)
         throw new Error("A user matching the id of the JWT token was not found.");
     }
 
     //Check that logged in user matches the quiz's user.
-    if(quiz.user.toString() !== user.id) {
+    if(quiz.user.toString() !== req.user.id) {
         res.status(401)
         throw new Error("Logged in user is not the creator of quiz.")
     }

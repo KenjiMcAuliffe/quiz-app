@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
     res.send("Landing page");
 });
 
-app.use('/api/quizzes', require('./routes/quizRoutes'));
+app.use('/api/quizzes', require('./routes/quizRoutes'))
 
 app.use('/api/users', require('./routes/userRoutes'))
 
