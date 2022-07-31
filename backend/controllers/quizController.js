@@ -1,7 +1,8 @@
 const Quiz = require('../models/quizModel');
 const User = require('../models/userModel');
 
-const asyncHandler = require('express-async-handler')
+const asyncHandler = require('express-async-handler');
+const { default: mongoose } = require('mongoose');
 
 const getQuizzes = asyncHandler(async (req, res) => {
     const quizzes = await Quiz.find();
@@ -17,14 +18,27 @@ const createQuiz = asyncHandler(async (req, res) => {
     const quiz = await Quiz.create({
         title: req.body.title,
         category: req.body.category,
-        user: req.user.id
+        user: req.user.id,
+        questions: req.body.questions,
     })
 
     res.status(200).json(quiz);
 })
 
 const getQuiz = asyncHandler(async (req, res) => {
-    const quiz = await Quiz.findById(req.params.id)
+    const idString = req.params.id;
+    var id;
+
+    try {
+        id = mongoose.Types.ObjectId(idString)
+    } 
+    catch (error) {
+        res.status(400)
+
+        throw new Error("A quiz matching that ID was not found")
+    }
+    
+    const quiz = await Quiz.findById(id)
 
     if(!quiz) {
         res.status(400)
@@ -63,7 +77,6 @@ const updateQuiz = asyncHandler(async (req, res) => {
 
 const deleteQuiz = asyncHandler(async (req, res) => {
     const quiz = await Quiz.findById(req.params.id)
-    console.log(req.params.id)
 
     if(!quiz) {
         res.status(400)
